@@ -148,6 +148,8 @@ private struct StatusPill: View {
 
 private struct GeneralPane: View {
     @Environment(BeanStore.self) private var store
+    @State private var editor: ProfessionEditorRequest?
+    @State private var deleting: CustomProfession?
 
     var body: some View {
         @Bindable var settings = store.settings
@@ -163,12 +165,35 @@ private struct GeneralPane: View {
 
             LanguageSetting()
 
-            SettingsGroup(String(localized: "我是做什么的"), footer: String(localized: "职业决定整理纪要时更看重什么。场景（会议、访谈、销售……）是每条录音自动判断的，判断错了可以在录音页面改。")) {
-                SettingRow(icon: "person.crop.circle", title: String(localized: "我的职业"), detail: settings.profession.focus) {
-                    Picker("我的职业", selection: $settings.profession) {
-                        ForEach(Profession.allCases) { Text($0.name).tag($0) }
+            SettingsGroup(String(localized: "我是做什么的"), footer: String(localized: "职业决定整理纪要时更看重什么。可以选一个预设，也可以新建自己的职业：写名称，再写一段整理时要留意的话。场景（会议、访谈、销售……）是每条录音自动判断的，判断错了可以在录音页面改。")) {
+                SettingRow(icon: "person.crop.circle", title: String(localized: "我的职业"), detail: settings.profession.settingsDetail) {
+                    HStack(spacing: 8) {
+                        if let current = settings.currentCustomProfession {
+                            Text(String(localized: "自定义"))
+                                .font(.caption.weight(.medium))
+                                .foregroundStyle(Theme.accent)
+                                .padding(.horizontal, 6).padding(.vertical, 2)
+                                .background(Theme.accent.opacity(0.14), in: .capsule)
+                            Button(String(localized: "编辑…")) { editor = ProfessionEditorRequest(existing: current) }
+                            Button(role: .destructive) { deleting = current } label: { Image(systemName: "trash") }
+                                .buttonStyle(.borderless)
+                                .help(String(localized: "删除「\(current.name)」"))
+                                .accessibilityLabel(String(localized: "删除「\(current.name)」"))
+                        }
+                        Button(String(localized: "新建…")) { editor = ProfessionEditorRequest(existing: nil) }
+                            .help(String(localized: "新建自定义职业"))
+                        Picker(String(localized: "我的职业"), selection: $settings.professionID) {
+                            Section(String(localized: "预设")) {
+                                ForEach(Profession.allCases) { Text($0.name).tag($0.rawValue) }
+                            }
+                            if !settings.customProfessions.isEmpty {
+                                Section(String(localized: "自定义")) {
+                                    ForEach(settings.customProfessions) { Text($0.name).tag($0.id) }
+                                }
+                            }
+                        }
+                        .labelsHidden().fixedSize().pickerStyle(.menu)
                     }
-                    .labelsHidden().fixedSize()
                 }
             }
 
@@ -194,6 +219,17 @@ private struct GeneralPane: View {
                 }
             }
         }
+        .sheet(item: $editor) { request in ProfessionEditorSheet(existing: request.existing) }
+        .confirmationDialog(String(localized: "删除这个自定义职业？"), isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }), presenting: deleting) { item in
+            Button(String(localized: "删除"), role: .destructive) { settingsDelete(item) }
+            Button(String(localized: "取消"), role: .cancel) {}
+        } message: { item in
+            Text(String(localized: "删掉「\(item.name)」之后会改回「通用」。已经整理好的纪要不会改。"))
+        }
+    }
+
+    private func settingsDelete(_ item: CustomProfession) {
+        store.settings.deleteCustomProfession(id: item.id)
     }
 }
 

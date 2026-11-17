@@ -88,7 +88,7 @@ nonisolated enum Analyzer {
 
     // MARK: 整理
 
-    static func analyze(transcript: String, duration: TimeInterval, profession: Profession, fixedScene: Scene?,
+    static func analyze(transcript: String, duration: TimeInterval, profession: SelectedProfession, fixedScene: Scene?,
                         config: LLMConfig) async throws -> Analysis {
         // 长录音先分块压成要点，再整体整理，避免超出模型的上下文
         var material = transcript
@@ -103,32 +103,13 @@ nonisolated enum Analyzer {
             material = notes.joined(separator: "\n\n")
         }
 
-        let sceneGuide = Scene.allCases.map { "- \($0.rawValue)（\($0.promptName)）：\($0.definition)。栏目：\($0.headings.joined(separator: "、"))" }
-            .joined(separator: "\n")
-        let sceneRule = fixedScene.map { "场景已经确定是 \($0.rawValue)，不要改。" }
-            ?? "先判断场景，从下面的英文代号里选一个。"
-        let system = """
-        你是录音整理助手。使用者的职业是「\(profession.promptName)」，\(profession.promptFocus)
-
-        \(sceneRule)
-        \(sceneGuide)
-
-        然后只输出一个 JSON 对象，不要任何别的文字：
-        {
-          "scene": "场景的英文代号",
-          "title": "\(NotesLanguage.isEnglish ? "一句话英文标题，不超过 10 个单词" : "一句话标题，不超过 18 个字")，说清这段录音是什么事",
-          "summary": "两到四句话的摘要，先说结论",
-          "sections": [{"heading": "所选场景的栏目名", "items": ["这一栏下的要点，每条一句完整的话"]}],
-          "todos": ["后续要做的事，写清谁、做什么、什么时候；没有就给空数组"],
-          "tags": ["2 到 5 个主题标签，名词，不带 #"],
-          "people": ["出现的人名或称呼；没有就给空数组"]
-        }
-
-        要求：
-        - sections 必须使用所选场景的栏目名，某一栏没有内容就不要输出这一栏。
-        - 只写录音里真有的内容。数字、金额、日期、人名照原样写，听不清的不要猜。
-        - \(NotesLanguage.rule)
-        """
+        // 场景仍按每条录音判断（或用用户锁定的场景），职业只决定前面那一句关注点。
+        let sceneGuide = Scene.allCases.map {
+            SelectedProfession.sceneGuideLine(code: $0.rawValue, name: $0.promptName, definition: $0.definition, headings: $0.headings)
+        }.joined(separator: "\n")
+        let titleHint = NotesLanguage.isEnglish ? "一句话英文标题，不超过 10 个单词" : "一句话标题，不超过 18 个字"
+        let system = profession.analysisSystem(fixedSceneCode: fixedScene?.rawValue, sceneGuide: sceneGuide,
+                                               titleHint: titleHint, notesRule: NotesLanguage.rule)
         let user = "录音时长：\(promptDuration(duration))\n\n文字稿：\n\(material)"
         let reply = try await chat(config, system: system, user: user, json: true)
         return try parse(reply, fixedScene: fixedScene, source: config.model)
@@ -216,15 +197,8 @@ nonisolated enum Analyzer {
 
     // MARK: 改写
 
-    static func rewrite(material: String, instruction: String, profession: Profession, config: LLMConfig) async throws -> String {
-        try await chat(config,
-            system: """
-            你是一位文字编辑。使用者的职业是「\(profession.promptName)」。下面是他一段录音的内容，请按要求改写。
-            要求：\(instruction)
-            只用录音里有的事实、观点和例子，不要编造数据或经历。录音里的口语垫词不要带进成品。
-            直接输出成品，不要解释你做了什么。
-            """,
-            user: material, json: false)
+    static func rewrite(material: String, instruction: String, profession: SelectedProfession, config: LLMConfig) async throws -> String {
+        try await chat(config, system: profession.rewriteSystem(instruction: instruction), user: material, json: false)
     }
 
     // MARK: 问知识库

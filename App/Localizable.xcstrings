@@ -2840,6 +2840,16 @@
         }
       }
     },
+    "保存": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
     "保存到本地": {
       "localizations": {
         "en": {
@@ -3540,6 +3550,16 @@
         }
       }
     },
+    "删掉「%@」之后会改回「通用」。已经整理好的纪要不会改。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After deleting “%@”, the choice goes back to General. Notes already written stay as they are."
+          }
+        }
+      }
+    },
     "删掉画面": {
       "localizations": {
         "en": {
@@ -3658,6 +3678,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Delete “%@”"
+          }
+        }
+      }
+    },
+    "删除自定义职业": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete custom occupation"
+          }
+        }
+      }
+    },
+    "删除这个自定义职业？": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this custom occupation?"
           }
         }
       }
@@ -4394,6 +4434,16 @@
         }
       }
     },
+    "可以选一个预设，也可以新建自己的职业。场景（会议、访谈、销售……）是每条录音自动判断的。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pick a preset, or create your own occupation. The scene (meeting, interview, sales…) is detected for each recording automatically."
+          }
+        }
+      }
+    },
     "可能是这个平台不让下载，或者网络不通。声音和文字稿不受影响；也可以点「打开原链接」去平台上看。": {
       "localizations": {
         "en": {
@@ -4470,6 +4520,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Name"
+          }
+        }
+      }
+    },
+    "名称": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
+    "名称和整理要求还没保存。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The name and the notes instructions aren't saved yet."
+          }
+        }
+      }
+    },
+    "名称显示在列表里。下面这段话会原样写进整理纪要的提示词，接在职业名后面，告诉模型该格外留意什么。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The name is what you see in the list. The text below is inserted into the notes prompt, right after the occupation name, and tells the model what to pay attention to."
           }
         }
       }
@@ -6028,6 +6108,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Disconnected. Takes effect after you reopen Claude."
+          }
+        }
+      }
+    },
+    "已经有一个叫「%@」的职业。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There's already an occupation named “%@”."
           }
         }
       }
@@ -8578,6 +8668,26 @@
         }
       }
     },
+    "放弃": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard"
+          }
+        }
+      }
+    },
+    "放弃这次编辑？": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard this edit?"
+          }
+        }
+      }
+    },
     "放慢": {
       "localizations": {
         "en": {
@@ -8654,6 +8764,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Summarized recordings appear under “Up Next” in Overview."
+          }
+        }
+      }
+    },
+    "整理时要留意什么": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What notes should pay attention to"
           }
         }
       }
@@ -8788,12 +8908,42 @@
         }
       }
     },
+    "新建…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New…"
+          }
+        }
+      }
+    },
     "新建标签「%@」": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "Create Tag “%@”"
+          }
+        }
+      }
+    },
+    "新建自定义职业": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New custom occupation"
+          }
+        }
+      }
+    },
+    "新建自定义职业…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New custom occupation…"
           }
         }
       }
@@ -8914,6 +9064,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Show Notch Panel"
+          }
+        }
+      }
+    },
+    "显示在职业列表里。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shown in the occupation list."
           }
         }
       }
@@ -10458,12 +10618,32 @@
         }
       }
     },
+    "比如：开源维护者": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. Open-source maintainer"
+          }
+        }
+      }
+    },
     "比如：我（职业装）": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
             "value": "e.g. Me (business attire)"
+          }
+        }
+      }
+    },
+    "比如：格外留意兼容性、破坏性改动和需要回复的问题。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. Pay special attention to compatibility, breaking changes, and questions that need a reply."
           }
         }
       }
@@ -12600,6 +12780,16 @@
         }
       }
     },
+    "继续编辑": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep editing"
+          }
+        }
+      }
+    },
     "综艺感花字、表情和音效更热闹：适合吐槽、生活建议、娱乐向人设": {
       "localizations": {
         "en": {
@@ -12626,6 +12816,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "ID %@ isn't an image."
+          }
+        }
+      }
+    },
+    "编辑…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit…"
+          }
+        }
+      }
+    },
+    "编辑自定义职业": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit custom occupation"
           }
         }
       }
@@ -12686,6 +12896,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Everything you've talked about leaves a trail"
+          }
+        }
+      }
+    },
+    "职业决定整理纪要时更看重什么。可以选一个预设，也可以新建自己的职业：写名称，再写一段整理时要留意的话。场景（会议、访谈、销售……）是每条录音自动判断的，判断错了可以在录音页面改。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your occupation shapes what notes focus on. Pick a preset, or create your own: a name, plus what the notes should pay attention to. The scene (meeting, interview, sales…) is detected for each recording automatically; if it's wrong, change it on the recording page."
           }
         }
       }
@@ -13448,6 +13668,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Choose your original network from the Wi‑Fi icon in the menu bar."
+          }
+        }
+      }
+    },
+    "请填写名称。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a name."
+          }
+        }
+      }
+    },
+    "请填写整理时要留意的内容。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter what the notes should pay attention to."
           }
         }
       }
@@ -14370,6 +14610,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "No recordings match this filter"
+          }
+        }
+      }
+    },
+    "这个自定义职业已经不在了。": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This custom occupation is no longer there."
           }
         }
       }
@@ -15670,6 +15920,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "All done around %@ (%@ left)"
+          }
+        }
+      }
+    },
+    "预设": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets"
           }
         }
       }

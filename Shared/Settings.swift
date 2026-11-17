@@ -60,7 +60,13 @@ final class AppSettings {
 
     var analysisMode: AnalysisMode { didSet { save("analysisMode", analysisMode.rawValue) } }
     var appearance: Appearance { didSet { save("appearance", appearance.rawValue) } }
-    var profession: Profession { didSet { save("profession", profession.rawValue) } }
+    /// 当前职业的稳定 id。内置项是 general、sales…；自定义项是 UUID。键名仍是 "profession"。
+    var professionID: String { didSet { save(ProfessionLibrary.selectionKey, professionID) } }
+    var customProfessions: [CustomProfession] {
+        didSet { UserDefaults.standard.set(ProfessionLibrary.stored(customProfessions), forKey: ProfessionLibrary.customKey) }
+    }
+    var profession: SelectedProfession { SelectedProfession.resolve(professionID, customs: customProfessions) }
+    var currentCustomProfession: CustomProfession? { customProfessions.first { $0.id == professionID } }
     var engine: Engine { didSet { save("engine", engine.rawValue) } }
     var language: String { didSet { save("language", language) } }
     var autoProcess: Bool { didSet { save("autoProcess", autoProcess) } }
@@ -129,7 +135,10 @@ final class AppSettings {
         #else
         appearance = Appearance(rawValue: d.string(forKey: "appearance") ?? "") ?? .system
         #endif
-        profession = Profession(rawValue: d.string(forKey: "profession") ?? "") ?? .general
+        let loaded = ProfessionLibrary.load(from: d)
+        let selectedProfession = loaded.library.selectedID
+        customProfessions = loaded.library.customs
+        professionID = selectedProfession
         #if os(macOS)
         engine = Engine(rawValue: d.string(forKey: "engine") ?? "") ?? .qwen
         #else
@@ -167,9 +176,44 @@ final class AppSettings {
         asrKey = Keychain.migrate("asrKey")
         llamaServerPath = d.string(forKey: "llamaServerPath") ?? ""
         exportFolder = d.string(forKey: "exportFolder") ?? ""
+        // 存着的职业代号已经对不上（比如自定义项被删掉之后留下的 id），写回「通用」。
+        if loaded.selectionWasInvalid { d.set(selectedProfession, forKey: ProfessionLibrary.selectionKey) }
     }
 
     private func save(_ key: String, _ value: Any) { UserDefaults.standard.set(value, forKey: key) }
+
+    private var professionLibrary: ProfessionLibrary {
+        get { ProfessionLibrary(customs: customProfessions, selectedID: professionID) }
+        set {
+            customProfessions = newValue.customs
+            professionID = newValue.selectedID
+        }
+    }
+
+    /// 新建自定义职业并选中它。名称或提示词不合格时什么都不改，返回给界面显示的原因。
+    @discardableResult
+    func addCustomProfession(name: String, prompt: String) -> ProfessionEditError? {
+        var library = professionLibrary
+        if let error = library.add(name: name, prompt: prompt) { return error }
+        professionLibrary = library
+        return nil
+    }
+
+    /// 修改自己建的职业。id 不变。
+    @discardableResult
+    func updateCustomProfession(id: String, name: String, prompt: String) -> ProfessionEditError? {
+        var library = professionLibrary
+        if let error = library.update(id: id, name: name, prompt: prompt) { return error }
+        professionLibrary = library
+        return nil
+    }
+
+    /// 删除自己建的职业。删的是当前项时回到「通用」。
+    func deleteCustomProfession(id: String) {
+        var library = professionLibrary
+        guard library.delete(id: id) else { return }
+        professionLibrary = library
+    }
 
     /// 整理用的云端服务预设。都是兼容 OpenAI 接口的地址（11-15 逐个探测过：不带密钥时都回 401，地址是对的）。
     /// model 是选了这家之后先填上的模型，空着就让用户从列表里挑；keyPage 是「去获取密钥」打开的页面。

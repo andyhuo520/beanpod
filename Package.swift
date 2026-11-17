@@ -11,6 +11,9 @@ let package = Package(
     targets: [
         .target(name: "BeanKit"),
         .executableTarget(name: "beanpod", swiftSettings: [.swiftLanguageMode(.v5)]),
+        // 职业预设、自定义项和整理提示词拼接。和 App 编译的是同一份 Shared/Profession.swift，这里单独做成库，便于不启动界面就测。
+        .target(name: "NotesCore", path: "Shared", sources: ["Profession.swift"]),
         .testTarget(name: "BeanKitTests", dependencies: ["BeanKit"], resources: [.copy("Fixtures")]),
+        .testTarget(name: "NotesCoreTests", dependencies: ["NotesCore"], path: "Tests/NotesCoreTests"),
     ]
 )

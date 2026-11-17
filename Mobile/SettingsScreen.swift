@@ -9,6 +9,8 @@ struct SettingsScreen: View {
     @State private var llmTesting = false
     @State private var llmResult: String?
     @State private var models: [String] = []
+    @State private var editor: ProfessionEditorRequest?
+    @State private var deleting: CustomProfession?
 
     var body: some View {
         @Bindable var settings = store.settings
@@ -22,11 +24,23 @@ struct SettingsScreen: View {
                 }
 
                 Section {
-                    Picker("我的职业", selection: $settings.profession) {
-                        ForEach(Profession.allCases) { Text($0.name).tag($0) }
+                    Picker("我的职业", selection: $settings.professionID) {
+                        Section("预设") {
+                            ForEach(Profession.allCases) { Text($0.name).tag($0.rawValue) }
+                        }
+                        if !settings.customProfessions.isEmpty {
+                            Section("自定义") {
+                                ForEach(settings.customProfessions) { Text($0.name).tag($0.id) }
+                            }
+                        }
+                    }
+                    Button("新建自定义职业…") { editor = ProfessionEditorRequest(existing: nil) }
+                    if let current = settings.currentCustomProfession {
+                        Button("编辑自定义职业") { editor = ProfessionEditorRequest(existing: current) }
+                        Button("删除自定义职业", role: .destructive) { deleting = current }
                     }
                 } header: { Text("整理方式") } footer: {
-                    Text(settings.profession.focus + "\n场景（会议、访谈、销售……）是每条录音自动判断的。")
+                    Text(settings.profession.settingsDetail + "\n" + String(localized: "可以选一个预设，也可以新建自己的职业。场景（会议、访谈、销售……）是每条录音自动判断的。"))
                 }
 
                 Section("录完之后") {
@@ -107,6 +121,13 @@ struct SettingsScreen: View {
             .navigationTitle("设置")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { dismiss() } } }
+            .sheet(item: $editor) { request in ProfessionEditorSheet(existing: request.existing) }
+            .confirmationDialog(String(localized: "删除这个自定义职业？"), isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }), presenting: deleting) { item in
+                Button(String(localized: "删除"), role: .destructive) { store.settings.deleteCustomProfession(id: item.id) }
+                Button(String(localized: "取消"), role: .cancel) {}
+            } message: { item in
+                Text(String(localized: "删掉「\(item.name)」之后会改回「通用」。已经整理好的纪要不会改。"))
+            }
             .task(id: settings.llmBaseURL + settings.llmKey) {
                 guard !settings.llmBaseURL.isEmpty else { return }
                 try? await Task.sleep(for: .seconds(0.8))
