@@ -261,18 +261,25 @@ struct FlowLayout: Layout {
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         var x = bounds.minX, y = bounds.minY, rowHeight: CGFloat = 0
         for v in subviews {
-            let s = v.sizeThatFits(.unspecified)
+            let s = fitted(v, bounds.width)
             if x + s.width > bounds.maxX, x > bounds.minX { x = bounds.minX; y += rowHeight + spacing; rowHeight = 0 }
-            v.place(at: CGPoint(x: x, y: y), proposal: .unspecified)
+            v.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(s))
             x += s.width + spacing; rowHeight = max(rowHeight, s.height)
         }
+    }
+
+    /// 一个标签自己就比整行还宽时，最多占满一行（文字省略），不撑出边界。
+    private func fitted(_ v: LayoutSubview, _ width: CGFloat) -> CGSize {
+        let natural = v.sizeThatFits(.unspecified)
+        guard width.isFinite, natural.width > width else { return natural }
+        return v.sizeThatFits(ProposedViewSize(width: width, height: nil))
     }
 
     private func arrange(_ width: CGFloat, _ subviews: Subviews) -> [(y: CGFloat, height: CGFloat, width: CGFloat)] {
         var rows: [(y: CGFloat, height: CGFloat, width: CGFloat)] = []
         var x: CGFloat = 0, y: CGFloat = 0, h: CGFloat = 0
         for v in subviews {
-            let s = v.sizeThatFits(.unspecified)
+            let s = fitted(v, width)
             if x + s.width > width, x > 0 { rows.append((y, h, x)); y += h + spacing; x = 0; h = 0 }
             x += s.width + spacing; h = max(h, s.height)
         }

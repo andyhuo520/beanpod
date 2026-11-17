@@ -2039,10 +2039,12 @@ struct NotesView: View {
                 }
             }
             if !recording.tags.isEmpty || !recording.people.isEmpty {
-                HStack(spacing: 6) {
+                // 人物和标签多的时候一行放不下：换行排，不能挤在一行里把字压成竖排（issue #2）
+                FlowLayout(spacing: 6) {
                     ForEach(recording.people, id: \.self) { p in chip(p, "person.fill") }
                     ForEach(recording.tags, id: \.self) { t in chip(t, "number") }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             if recording.analyzedBy == "关键词规则" {
                 Card {
@@ -2064,6 +2066,7 @@ struct NotesView: View {
     private func chip(_ text: String, _ icon: String) -> some View {
         Text(icon == "number" ? "# " + text.trimmingCharacters(in: CharacterSet(charactersIn: "# ")) : text)
             .font(.system(size: 12, weight: .medium)).foregroundStyle(Theme.warm700)
+            .lineLimit(1).truncationMode(.tail)
             .padding(.horizontal, 10).padding(.vertical, 4)
             .background(Theme.warm100, in: .rect(cornerRadius: Theme.Radius.card))
     }

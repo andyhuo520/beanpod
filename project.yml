@@ -16,8 +16,8 @@ settings:
     # 多语言：界面文字用 String Catalog（App/Localizable.xcstrings），中文是开发语言，英文是翻译
     LOCALIZATION_PREFERS_STRING_CATALOGS: YES
     SWIFT_EMIT_LOC_STRINGS: YES
-    MARKETING_VERSION: "0.1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "0.1.1"
+    CURRENT_PROJECT_VERSION: "2"
 targets:
   BeanPod:
     type: application
